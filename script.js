@@ -65,6 +65,14 @@ function translate() {
         })
         .then(res => res.json())
         .then(data => {
+            if (data.error) {
+                outputText.textContent = 'Something went wrong, try again!'
+                console.error(data.error)
+            } else {
+                outputText.textContent = data.result
+            }
+        })
+        .catch(err => {
             outputText.textContent = 'Something went wrong, try again!'
             console.error(err)
         })
