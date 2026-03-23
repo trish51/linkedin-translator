@@ -13,9 +13,9 @@ const toEnglish = {
 }
 
 const toLinkedIn = {
-  "i got fired": "I'm excited to embrace a new chapter",
-  "i quit": "I'm passionately pursuing new opportunities",
-  "reach out": "email me",
+  "i got fired": "I'm excited to embrace a new chapter 🚀",
+  "i quit": "I'm passionately pursuing new opportunities 🎯",
+  "reach out": "email me 📧",
   "circle back": "I’m going to ignore this until you ask again",
   "let’s take this offline": "Stop talking about this in front of everyone",
   "disrupting the industry": "We have an app that does what a website used to do",
