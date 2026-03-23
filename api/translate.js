@@ -3,10 +3,16 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' })
     }
 
-    const { text, mode } = req.body
+    let body = req.body
+    if (typeof body === 'string') {
+        body = JSON.parse(body)
+    }
+
+    const { text, mode } = body
+    console.log('body received:', text, mode)
 
     if (!text) {
-        return res.status(400).json({ error: 'No Text Provided' })  // ← fix typo: statrus → status
+        return res.status(400).json({ error: 'No Text Provided' }) 
     }
 
     const prompt = mode === 'toEnglish'
@@ -24,10 +30,10 @@ export default async function handler(req, res) {
             messages: [{ role: 'user', content: prompt }],
             max_tokens: 100
         })
-    })  // ← fetch closes here
+    }) 
 
     const data = await response.json()
-    console.log('Groq response:', JSON.stringify(data))  // ← debug line here
+    console.log('Groq response:', JSON.stringify(data))  
     const result = data.choices[0].message.content.trim()
     res.status(200).json({ result })
 }
