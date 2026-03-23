@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" />
+    <title>LinkedIn Translator</title>
+  </head>
+
+  <body>
+    <header>
+        <h1>LinkedIn Translator</h1>
+        <p>What does it actually mean.</p>
+    </header>
+
+    <div class="translator">
+
+        <div class="panel">
+            <p class="panel-label" id="input-label">LinkedIn</p>
+            <textarea id="input-text" placeholder="Paste LinkedIn jargon..."></textarea>
+        </div>
+
+        <button id="swap-btn">↔</button>
+
+        <div class="panel">
+            <p class="panel-label" id="output-label">English</p>
+            <div id="output-text"></div>
+        </div>
+    </div>
+
+    <button id="translate-btn">Translate</button>
+
+    <div class="examples">
+        <p>Try these:</p>
+        <span class="chip">Humbled and honoured</span>
+        <span class="chip">Thought leader</span>
+        <span class="chip">Let's circle back</span>
+        <span class="chip">New chapter</span>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
