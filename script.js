@@ -54,7 +54,20 @@ function translate() {
     if (result) {
             outputText.textContent = result
     } else {
-        outputText.textContent = 'Calling AI...'
+        outputText.textContent = 'Translating...'
+
+        fetch('/api/translate', {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({text: input, mode: mode})
+        })
+        .then(res => res.json())
+        .then(data => {
+            outputText.textContent = 'Something went wrong, try again!'
+            console.error(err)
+        })
     }
 }
 
