@@ -13,15 +13,29 @@ export default async function handler(req, res) {
     }
 
     const { text, mode } = body
-    console.log('body received:', text, mode)
 
-    if (!text) {
-        return res.status(400).json({ error: 'No Text Provided' }) 
+    //Sanitize inputs
+    const sanitized = text
+        .replace(/[<>{}\/\\]/g, '')
+        .replace(/https?:\/\/[^\s]*/g, '')
+        .trim()
+        .slice(0, 500)
+
+    // validate mode is only one of two expected values
+    if(mode !== 'toEnglish' && mode !== 'toLinkedIn') {
+        return res.status(400).json({ error: 'Invalid mode'})
     }
 
+    // replace text with sanitized version going forward
+    if (!sanitized) {
+        return res.status(400).json({ error: 'No valid text provided' })
+    }
+
+    console.log('body received:', text, mode)
+
     const prompt = mode === 'toEnglish'
-        ? `Translate this LinkedIn jargon into blunt honest English. Be funny and ruthless. Keep it to 1-2 sentences max: "${text}"`
-        : `Rewrite this as a LinkedIn post. Be over-the-top, use buzzwords, add unnecessary life lessons, maybe a humblebrag. Use emojis liberally throughout like a real LinkedIn post would. Always finish with a complete sentence and a hashtag. 3-5 sentences max: "${text}"`
+        ? `Translate this LinkedIn jargon into blunt honest English. Be funny and ruthless. Keep it to 1-2 sentences max: "${sanitized}"`
+        : `Rewrite this as a LinkedIn post. Be over-the-top, use buzzwords, add unnecessary life lessons, maybe a humblebrag. Use emojis liberally throughout like a real LinkedIn post would. Always finish with a complete sentence and a hashtag. 3-5 sentences max: "${sanitized}"`
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {

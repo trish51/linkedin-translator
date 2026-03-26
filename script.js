@@ -56,6 +56,13 @@ function translate() {
     } else {
         outputText.textContent = 'Translating...'
 
+        // frontend validation
+        const cleaned = input.replace(/[<>{}\/\\]/g, '').trim()
+        if (!cleaned) {
+            outputText.textContent = 'Please enter some text!'
+            return
+        }
+
         fetch('/api/translate', {
             method: 'POST', 
             headers: {
