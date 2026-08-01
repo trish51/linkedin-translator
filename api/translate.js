@@ -1,6 +1,47 @@
+// Basic in-memory rate limiter.
+// Note: this resets whenever the serverless function cold-starts and is
+// per-instance, not shared across regions/instances. It's a reasonable
+// first line of defense against casual abuse, but for strict/production
+// rate limiting across a distributed serverless deployment, use a shared
+// store like Upstash Redis (Vercel KV) instead.
+const RATE_LIMIT_WINDOW_MS = 60 * 1000 // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 10     // max requests per IP per window
+
+const requestLog = new Map() // ip -> array of timestamps
+
+function isRateLimited(ip) {
+    const now = Date.now()
+    const timestamps = requestLog.get(ip) || []
+
+    // drop timestamps outside the current window
+    const recent = timestamps.filter(t => now - t < RATE_LIMIT_WINDOW_MS)
+
+    if (recent.length >= RATE_LIMIT_MAX_REQUESTS) {
+        requestLog.set(ip, recent)
+        return true
+    }
+
+    recent.push(now)
+    requestLog.set(ip, recent)
+    return false
+}
+
+function getClientIp(req) {
+    const forwarded = req.headers['x-forwarded-for']
+    if (forwarded) {
+        return forwarded.split(',')[0].trim()
+    }
+    return req.socket?.remoteAddress || 'unknown'
+}
+
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' })
+    }
+
+    const ip = getClientIp(req)
+    if (isRateLimited(ip)) {
+        return res.status(429).json({ error: 'Too many requests, please slow down.' })
     }
 
     let body = req.body
